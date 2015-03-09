@@ -1,0 +1,1 @@
+I can post the code the professor gave, but I can't figure out how to get the formatting right in these posts. Am I reading right that I have to put four spaces in front of every line to get the code formatting properly here? There is no way to just block a whole bunch of code at once? Again, I feel like I am missing something extremely easy there.
