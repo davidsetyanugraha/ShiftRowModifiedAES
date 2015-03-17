@@ -168,7 +168,37 @@ public class AES {
 //				state[r][c] = t[c];
 //		}
 		
-		int[] seq = new int[state.length * state[0].length];
+		byte[] t = new byte[4];
+		for (int i = 0; i < 4; i++) {
+			byte a,b,c,d;
+			a = w[round * Nb + 0][i];
+			b = w[round * Nb + 1][i];
+			c = w[round * Nb + 2][i];
+			d = w[round * Nb + 3][i];
+			if ((a ^ d) > (b ^ c)) {
+//				shiftRight(state,i);
+				for (int c1 = 0; c1 < Nb; c1++) {
+					t[c1] = state[i][(c1 + 1) % Nb];
+				}
+			}
+			else if ((a ^ d) < (b ^ c)) {
+//				shiftLeft(state,i);
+				for (int c1 = 0; c1 < Nb; c1++) {
+					t[c1] = state[i][(c1 - 1) % Nb];
+				}
+			}
+			else {
+//				shiftDouble(state,i);
+				for (int c1 = 0; c1 < Nb; c1++) {
+					t[c1] = state[i][(c1 + 2) % Nb];
+				}
+			}
+			
+			for (int c1 = 0; c1 < Nb; c1++)
+				state[i][c1] = t[c1];
+		}
+		
+		/*int[] seq = new int[state.length * state[0].length];
 		byte[][] temp = new byte[state.length][state[0].length];
 		for (int i = 0; i < temp.length; i++) {
 			for (int j = 0; j < temp[i].length; j++) {
@@ -207,18 +237,47 @@ public class AES {
 				state[x][y] = temp[j][i];
 				pos++;
 			}
-		}
+		}*/
 		
 		return state;
 	}
 	
-	private static byte[][] InvShiftRows(byte[][] state) { 
-		byte[] t = new byte[4]; 
-		for (int r = 1; r < 4; r++) {
-			for (int c = 0; c < Nb; c++) 
-				t[(c + r)%Nb] = state[r][c];
-			for (int c = 0; c < Nb; c++) 
-				state[r][c] = t[c];
+	private static byte[][] InvShiftRows(byte[][] state, byte[][] w, int round) { 
+//		byte[] t = new byte[4]; 
+//		for (int r = 1; r < 4; r++) {
+//			for (int c = 0; c < Nb; c++) 
+//				t[(c + r)%Nb] = state[r][c];
+//			for (int c = 0; c < Nb; c++) 
+//				state[r][c] = t[c];
+//		}
+		byte[] t = new byte[4];
+		for (int i = 0; i < 4; i++) {
+			byte a,b,c,d;
+			a = w[round * Nb + 0][i];
+			b = w[round * Nb + 1][i];
+			c = w[round * Nb + 2][i];
+			d = w[round * Nb + 3][i];
+			if ((a ^ d) > (b ^ c)) {
+//				shiftRight(state,i);
+				for (int c1 = 0; c1 < Nb; c1++) {
+					t[(c1 + 1) % Nb] = state[i][c1];
+				}
+			}
+			else if ((a ^ d) < (b ^ c)) {
+//				shiftLeft(state,i);
+				for (int c1 = 0; c1 < Nb; c1++) {
+					t[(c1 - 1) % Nb] = state[i][c1];
+				}
+			}
+			else {
+//				shiftDouble(state,i);
+				for (int c1 = 0; c1 < Nb; c1++) {
+					t[(c1 + 2) % Nb] = state[i][c1];
+				}
+			}
+			
+			for (int c1 = 0; c1 < Nb; c1++)
+				state[i][c1] = t[c1];
 		}
 	return state;
 	}
@@ -307,13 +366,13 @@ public class AES {
 		state = AddRoundKey(state, w, Nr);
 		for (int round = Nr-1; round >=1; round--) {
 			state = InvSubBytes(state);
-			state = InvShiftRows(state);
+			state = InvShiftRows(state, w, round);
 			state = AddRoundKey(state, w, round);
 			state = InvMixColumns(state);
 			
 		}
 		state = InvSubBytes(state);
-		state = InvShiftRows(state);
+		state = InvShiftRows(state, w, 0);
 		state = AddRoundKey(state, w, 0);
 
 		for (int i = 0; i < tmp.length; i++)
