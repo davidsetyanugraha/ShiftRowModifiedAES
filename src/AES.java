@@ -184,7 +184,9 @@ public class AES {
 			else if ((a ^ d) < (b ^ c)) {
 //				shiftLeft(state,i);
 				for (int c1 = 0; c1 < Nb; c1++) {
-					t[c1] = state[i][(c1 - 1) % Nb];
+					int z = c1-1;
+					if (z < 0) z+=Nb;
+					t[c1] = state[i][z % Nb];
 				}
 			}
 			else {
@@ -266,7 +268,9 @@ public class AES {
 			else if ((a ^ d) < (b ^ c)) {
 //				shiftLeft(state,i);
 				for (int c1 = 0; c1 < Nb; c1++) {
-					t[(c1 - 1) % Nb] = state[i][c1];
+					int z = c1-1;
+					if (z < 0) z+=Nb;
+					t[z % Nb] = state[i][c1];
 				}
 			}
 			else {
