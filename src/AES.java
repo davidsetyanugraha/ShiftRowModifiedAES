@@ -260,8 +260,7 @@ public class AES {
 			state = InvSubBytes(state);
 			state = InvShiftRows(state);
 			state = AddRoundKey(state, w, round);
-			state = InvMixColumns(state);
-			
+			state = InvMixColumns(state);			
 		}
 		state = InvSubBytes(state);
 		state = InvShiftRows(state);
@@ -277,26 +276,25 @@ public class AES {
 		Nb = 4;
 		Nk = key.length/4;
 		Nr = Nk + 6;
-				
-		int lenght=0;
+		
+		int length=0;
 		byte[] padding = new byte[1];
 		int i;
-		lenght = 16 - in.length % 16;				
-		padding = new byte[lenght];					
+		length = 16 - in.length % 16;				
+		padding = new byte[length];					
 		padding[0] = (byte) 0x80;
 		
-		for (i = 1; i < lenght; i++)				
+		for (i = 1; i < length; i++)				
 			padding[i] = 0;
 
-		byte[] tmp = new byte[in.length + lenght];		
+		byte[] tmp = new byte[in.length + length];		
 		byte[] bloc = new byte[16];							
-		
-		
+				
 		w = generateSubkeys(key);
 		
 		int count = 0;
 
-		for (i = 0; i < in.length + lenght; i++) {
+		for (i = 0; i < in.length + length; i++) {
 			if (i > 0 && i % 16 == 0) {
 				bloc = encryptBloc(bloc);
 				System.arraycopy(bloc, 0, tmp, i - 16, bloc.length);
