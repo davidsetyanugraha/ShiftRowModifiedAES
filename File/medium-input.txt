@@ -1,0 +1,1 @@
+Before the modern era, cryptography was concerned solely with message confidentiality (i.e., encryption)- conversion of messages from a comprehensible form into an incomprehensible one and back again at the other end, rendering it unreadable by interceptors or eavesdroppers without secret knowledge (namely the key needed for decryption of that message).

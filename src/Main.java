@@ -14,9 +14,13 @@ public class Main {
 		try{
 			//AES
 			String plainText;
-			
+			 long startTime = System.currentTimeMillis();
+		      long total = 0;
+
 			/**From file*/
-			plainText = readFromFile("File/input.txt");
+//			plainText = readFromFile("File/short-input.txt");
+//			plainText = readFromFile("File/medium-input.txt");
+//			plainText = readFromFile("File/large-input.txt");
 			/**Hardcode mode*/
 			plainText = "makan nasi";			
 
@@ -25,12 +29,17 @@ public class Main {
 			System.out.println("Plain Text: "+plainText);
 			byte[] enc = AES.encrypt(plainText.getBytes(), k.getBytes());
 			System.out.println("Encrypted text AES: "+new String(enc));
-
+			
+			long stopTime = System.currentTimeMillis();
+			long elapsedTime = stopTime - startTime;
+			System.out.println(elapsedTime);
+			
+			
 			byte[] dec = AES.decrypt(enc, k.getBytes());
 			System.out.println("Decrypted text AES: "+new String(dec));
 			System.out.println("------------------");
 	
-			
+
 		}catch(Exception e){
 			e.printStackTrace();
 		}
