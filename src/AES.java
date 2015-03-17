@@ -1,3 +1,5 @@
+import java.util.Collections;
+
 
 public class AES {
 
@@ -156,16 +158,57 @@ public class AES {
 		return state;
 	}
 
-	private static byte[][] ShiftRows(byte[][] state) {
+	private static byte[][] ShiftRows(byte[][] state, byte[][] w, int round) {
 
-		byte[] t = new byte[4];
-		for (int r = 1; r < 4; r++) {
-			for (int c = 0; c < Nb; c++)
-				t[c] = state[r][(c + r) % Nb];
-			for (int c = 0; c < Nb; c++)
-				state[r][c] = t[c];
+//		byte[] t = new byte[4];
+//		for (int r = 1; r < 4; r++) {
+//			for (int c = 0; c < Nb; c++)
+//				t[c] = state[r][(c + r) % Nb];
+//			for (int c = 0; c < Nb; c++)
+//				state[r][c] = t[c];
+//		}
+		
+		int[] seq = new int[state.length * state[0].length];
+		byte[][] temp = new byte[state.length][state[0].length];
+		for (int i = 0; i < temp.length; i++) {
+			for (int j = 0; j < temp[i].length; j++) {
+				temp[j][i] = state[j][i];
+			}
 		}
-
+		
+		// fill sequence
+		for (int i = 0; i < seq.length; i++) {
+			seq[i] = i;
+		}
+		byte[] seqval = new byte[seq.length];
+		int u = 0;
+		for (int c = 0; c < Nb; c++) {
+			for (int l = 0; l < 4; l++) {
+				seqval[u] = w[round * Nb + c][l];
+				u++;
+			}
+		}
+		// sorting
+		int i,j;
+		for (i = 1; i < seqval.length; i++) {
+			j=i;
+			while(j>0 && seqval[j-1] > seqval[j]) {
+				AES.swapInt(seqval[j-1], seqval[j]);
+				AES.swapInt(seq[j-1], seq[j]);
+			}
+		}
+		
+		// change state
+		int pos = 0;
+		for (i = 0; i < state.length; i++) {
+			for (j = 0; j < state[i].length; j++) {
+				int x = seq[pos] % state.length;
+				int y = seq[pos] / state.length;
+				state[x][y] = temp[j][i];
+				pos++;
+			}
+		}
+		
 		return state;
 	}
 	
@@ -178,6 +221,12 @@ public class AES {
 				state[r][c] = t[c];
 		}
 	return state;
+	}
+	
+	public static void swapInt(int a, int b) {
+		int temp = a;
+		a = b;
+		b = temp;
 	}
 
 	private static byte[][] InvMixColumns(byte[][] s){
@@ -233,12 +282,12 @@ public class AES {
 		state = AddRoundKey(state, w, 0);
 		for (int round = 1; round < Nr; round++) {
 			state = SubBytes(state);
-			state = ShiftRows(state);
+			state = ShiftRows(state, w, round);
 			state = MixColumns(state);
 			state = AddRoundKey(state, w, round);
 		}
 		state = SubBytes(state);
-		state = ShiftRows(state);
+		state = ShiftRows(state, w, Nr);
 		state = AddRoundKey(state, w, Nr);
 
 		for (int i = 0; i < tmp.length; i++)
